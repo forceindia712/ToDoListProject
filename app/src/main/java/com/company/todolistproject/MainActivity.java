@@ -1,6 +1,7 @@
 package com.company.todolistproject;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
     RecyclerViewAdapter rvAdapter = null;
     ArrayList<String> itemlist = new ArrayList<>();
     ArrayList<MyItem> itemslist = new ArrayList<>();
+    SharedPreferences sp;
 
 
     @Override
@@ -29,14 +31,18 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
 
         itemlist = FileHelper.readData(this);
 
+        sp = getSharedPreferences("MyList", MODE_PRIVATE);
+        itemlist = FileHelper.readDataSP(sp);
+
         binding.button.setOnClickListener(v -> {
             String itemName = binding.editText.getText().toString();
             itemlist.add(itemName);
-            FileHelper.writeData(itemlist, getApplicationContext());
+//            FileHelper.writeData(itemlist, getApplicationContext());
 //            MyItem item = new MyItem(itemName, false);
 //            MyItem link = new MyItem("https://www.overdrive.ie/wp-content/uploads/2017/03/Bottom-Ads-bloodstock-150px-X-100px.jpg", true);
 //            itemslist.add(item);
 //            itemslist.add(link);
+            FileHelper.writeDataSP(itemlist, sp);
             binding.editText.setText("");
             rvAdapter.notifyDataSetChanged();
         });
