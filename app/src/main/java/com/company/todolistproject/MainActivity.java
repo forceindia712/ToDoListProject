@@ -1,55 +1,55 @@
 package com.company.todolistproject;
 
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
 
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.company.todolistproject.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements RecyclerViewAdapter.ClickListener {
 
-    EditText item;
-    Button add;
-    ListView listView;
+    ActivityMainBinding binding;
+    RecyclerViewAdapter rvAdapter = null;
     ArrayList<String> itemlist = new ArrayList<>();
-    ArrayAdapter<String> arrayAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        item = findViewById(R.id.editText);
-        add = findViewById(R.id.button);
-        listView = findViewById(R.id.list);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         itemlist = FileHelper.readData(this);
 
-        arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, itemlist);
-        listView.setAdapter(arrayAdapter);
-
-        add.setOnClickListener(v -> {
-            String itemName = item.getText().toString();
+        binding.button.setOnClickListener(v -> {
+            String itemName = binding.editText.getText().toString();
             itemlist.add(itemName);
-            item.setText("");
+            binding.editText.setText("");
             FileHelper.writeData(itemlist, getApplicationContext());
-            arrayAdapter.notifyDataSetChanged();
+            rvAdapter.notifyDataSetChanged();
         });
 
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-            Callback callback = () -> {
-                itemlist.remove(position);
-                arrayAdapter.notifyDataSetChanged();
-                FileHelper.writeData(itemlist, getApplicationContext());
-            };
-            DialogFragment alert = new AlertDialogFragment(callback);
-            alert.show(getSupportFragmentManager(), "dialog");
-        });
+        rvAdapter = new RecyclerViewAdapter(itemlist);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+        binding.recyclerView.setHasFixedSize(true);
+        binding.recyclerView.setAdapter(rvAdapter);
+        rvAdapter.setClickListener(this);
+    }
+
+    @Override
+    public void onItemClick(@NonNull String item, @NonNull RecyclerView.ViewHolder holder, int position) {
+        Callback callback = () -> {
+            itemlist.remove(position);
+            rvAdapter.notifyDataSetChanged();
+            FileHelper.writeData(itemlist, getApplicationContext());
+        };
+        DialogFragment alert = new AlertDialogFragment(callback);
+        alert.show(getSupportFragmentManager(), "dialog");
     }
 }
