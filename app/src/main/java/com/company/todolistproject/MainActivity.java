@@ -3,6 +3,7 @@ package com.company.todolistproject;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -21,6 +22,7 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
     ArrayList<MyItem> itemlist = new ArrayList<>();
     ArrayList<MyItem> itemslistNotDeleted = new ArrayList<>();
     SharedPreferences sp;
+    Boolean visibleDeleted = false;
 
 
     @Override
@@ -33,10 +35,10 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
         itemlist = FileHelper.readDataJSON(sp);
         itemslistNotDeleted = FileHelper.tempArray(itemlist, false);
 
-        if(itemlist == null)
+        if (itemlist == null)
             itemlist = new ArrayList<>();
 
-        if(itemslistNotDeleted == null)
+        if (itemslistNotDeleted == null)
             itemslistNotDeleted = new ArrayList<>();
 
         binding.button.setOnClickListener(v -> {
@@ -46,6 +48,48 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
             FileHelper.writeDataJSON(itemlist, sp);
             binding.editText.setText("");
             rvAdapter.notifyDataSetChanged();
+        });
+
+        binding.button3.setOnClickListener(v -> {
+            ArrayList<MyItem> tempItemList = FileHelper.sortingNumber(itemlist);
+            ArrayList<MyItem> tempItemNotDeleted = FileHelper.sortingNumber(itemslistNotDeleted);
+
+            itemlist.clear();
+            itemlist.addAll(tempItemList);
+
+            itemslistNotDeleted.clear();
+            itemslistNotDeleted.addAll(tempItemNotDeleted);
+
+            rvAdapter.notifyDataSetChanged();
+        });
+
+        binding.button4.setOnClickListener(v -> {
+            ArrayList<MyItem> tempItemList = FileHelper.sortingDate(itemlist);
+            ArrayList<MyItem> tempItemNotDeleted = FileHelper.sortingDate(itemslistNotDeleted);
+
+            itemlist.clear();
+            itemlist.addAll(tempItemList);
+
+            itemslistNotDeleted.clear();
+            itemslistNotDeleted.addAll(tempItemNotDeleted);
+
+            rvAdapter.notifyDataSetChanged();
+        });
+
+        binding.button5.setOnClickListener(v -> {
+            if(!visibleDeleted) {
+                visibleDeleted = true;
+                itemslistNotDeleted.clear();
+                itemslistNotDeleted.addAll(itemlist);
+
+                rvAdapter.notifyDataSetChanged();
+            } else {
+                visibleDeleted = false;
+                itemslistNotDeleted.clear();
+                itemslistNotDeleted.addAll(FileHelper.tempArray(itemlist, false));
+
+                rvAdapter.notifyDataSetChanged();
+            }
         });
 
         rvAdapter = new RecyclerViewAdapter(itemslistNotDeleted);
@@ -59,6 +103,7 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
     public void onItemClick(@NonNull MyItem item, @NonNull RecyclerView.ViewHolder holder, int position) {
         Callback callback = () -> {
             itemlist = FileHelper.removeItem(itemlist, item);
+            FileHelper.writeDataJSON(itemlist, sp);
             itemslistNotDeleted.remove(position);
             rvAdapter.notifyDataSetChanged();
         };
@@ -68,6 +113,10 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
 
     @Override
     public void onButtonClick(@NonNull MyItem item, @NonNull RecyclerView.ViewHolder holder, int position) {
-        // idDeleted == true
+        itemlist = FileHelper.renewItem(itemlist, item);
+        FileHelper.writeDataJSON(itemlist, sp);
+        itemslistNotDeleted.clear();
+        itemslistNotDeleted.addAll(itemlist);
+        rvAdapter.notifyDataSetChanged();
     }
 }

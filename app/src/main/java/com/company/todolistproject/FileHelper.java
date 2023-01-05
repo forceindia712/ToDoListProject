@@ -16,6 +16,9 @@ import java.io.ObjectOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class FileHelper {
 
@@ -107,10 +110,10 @@ public class FileHelper {
 
         long id = 0;
 
-        if(itemlist == null || itemlist.size() == 0)
+        if (itemlist == null || itemlist.size() == 0)
             id = 0;
         else
-            id = itemlist.get(itemlist.size() - 1).getId()+1;
+            id = itemlist.get(itemlist.size() - 1).getId() + 1;
 
         LocalDateTime data = LocalDateTime.now();
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
@@ -122,6 +125,57 @@ public class FileHelper {
         for (int i = 0; i < itemlist.size(); i++) {
             if (itemlist.get(i).getId() == item.getId()) {
                 itemlist.get(i).setDeleted(true);
+            }
+        }
+        return itemlist;
+    }
+
+    public static ArrayList<MyItem> sortingNumber(ArrayList<MyItem> itemlist) {
+
+        String tempTab[] = new String[itemlist.size()];
+        for (int i = 0; i < itemlist.size(); i++) {
+            tempTab[i] = itemlist.get(i).getText();
+        }
+
+        Arrays.sort(tempTab, Comparator.comparingInt(String::length));
+        ArrayList<MyItem> tempArray = new ArrayList<>();
+        for (int i = 0; i < itemlist.size(); i++) {
+            for (int j = 0; j < itemlist.size(); j++) {
+                if (tempTab[i].equals(itemlist.get(j).getText())) {
+                    tempArray.add(itemlist.get(j));
+                }
+            }
+        }
+        return tempArray;
+    }
+
+    public static ArrayList<MyItem> sortingDate(ArrayList<MyItem> itemlist) {
+
+        ArrayList<String> tempArray = new ArrayList<>();
+        for (int i = 0; i < itemlist.size(); i++) {
+            tempArray.add(itemlist.get(i).getData());
+        }
+
+        Collections.sort(tempArray);
+        ArrayList<MyItem> tempArrayTwo = new ArrayList<>();
+        for (int i = 0; i < itemlist.size(); i++) {
+            for (int j = 0; j < itemlist.size(); j++)
+                if (tempArray.get(i).equals(itemlist.get(j).getData())) {
+                    tempArrayTwo.add(itemlist.get(j));
+                }
+        }
+        return tempArrayTwo;
+    }
+
+    public static ArrayList<MyItem> renewItem(ArrayList<MyItem> itemlist, MyItem item) {
+        LocalDateTime data = LocalDateTime.now();
+        DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        String formattedDate = data.format(myFormatObj);
+
+        for (int i = 0; i < itemlist.size(); i++) {
+            if (itemlist.get(i).getId() == item.getId()) {
+                itemlist.get(i).setDeleted(false);
+                itemlist.get(i).setData(formattedDate);
             }
         }
         return itemlist;

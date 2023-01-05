@@ -1,15 +1,11 @@
 package com.company.todolistproject
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebViewClient
-import androidx.core.view.isGone
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.company.todolistproject.databinding.ItemRecyclerviewBinding
-import com.company.todolistproject.databinding.ItemWebviewBinding
 
 class RecyclerViewAdapter (private var list: ArrayList<MyItem>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -55,6 +51,8 @@ class RecyclerViewAdapter (private var list: ArrayList<MyItem>) : RecyclerView.A
         viewHolder.binding.item.text = item.text
         viewHolder.binding.data.text = item.data
         viewHolder.binding.button2.visibility = View.VISIBLE
+        viewHolder.binding.view1.setBackgroundColor(Color.RED)
+        viewHolder.binding.view2.setBackgroundColor(Color.RED)
         viewHolder.binding.button2.setOnClickListener{
             clickListener?.onButtonClick(item, viewHolder, position)
         }
