@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.company.todolistproject.repository.FileHelper;
+
 import java.util.ArrayList;
 
 public class MyService extends Service {
@@ -23,7 +25,6 @@ public class MyService extends Service {
                         SharedPreferences sp;
 
                         sp = getSharedPreferences("MyList", MODE_PRIVATE);
-//                        sp = getApplicationContext().getSharedPreferences("MyList", Context.MODE_PRIVATE);
 
                         ArrayList<String> list = intent.getExtras().getStringArrayList("list_remove");
                         FileHelper.writeDataSP(list, sp);

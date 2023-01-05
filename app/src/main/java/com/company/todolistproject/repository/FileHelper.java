@@ -1,9 +1,10 @@
-package com.company.todolistproject;
+package com.company.todolistproject.repository;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
+import com.company.todolistproject.item.MyItem;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -21,6 +22,9 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class FileHelper {
+
+    public FileHelper() {
+    }
 
     public static final String FILENAME = "listinfoa.dat";
 
@@ -103,6 +107,7 @@ public class FileHelper {
                 return tempArray;
             }
         }
+
         return tempArray;
     }
 

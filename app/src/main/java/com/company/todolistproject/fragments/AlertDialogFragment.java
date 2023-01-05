@@ -1,4 +1,4 @@
-package com.company.todolistproject;
+package com.company.todolistproject.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+
+import com.company.todolistproject.Callback;
 
 public class AlertDialogFragment extends DialogFragment {
 
