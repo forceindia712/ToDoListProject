@@ -18,8 +18,8 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
 
     ActivityMainBinding binding;
     RecyclerViewAdapter rvAdapter = null;
-    ArrayList<String> itemlist = new ArrayList<>();
-    ArrayList<MyItem> itemslist = new ArrayList<>();
+    ArrayList<MyItem> itemlist = new ArrayList<>();
+    ArrayList<MyItem> itemslistNotDeleted = new ArrayList<>();
     SharedPreferences sp;
 
 
@@ -29,27 +29,26 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        itemlist = FileHelper.readData(this);
-
         sp = getSharedPreferences("MyList", MODE_PRIVATE);
-        itemlist = FileHelper.readDataSP(sp);
+        itemlist = FileHelper.readDataJSON(sp);
+        itemslistNotDeleted = FileHelper.tempArray(itemlist, false);
+
+        if(itemlist == null)
+            itemlist = new ArrayList<>();
+
+        if(itemslistNotDeleted == null)
+            itemslistNotDeleted = new ArrayList<>();
 
         binding.button.setOnClickListener(v -> {
             String itemName = binding.editText.getText().toString();
-            itemlist.add(itemName);
-//            FileHelper.writeData(itemlist, getApplicationContext());
-//            MyItem item = new MyItem(itemName, false);
-//            MyItem link = new MyItem("https://www.overdrive.ie/wp-content/uploads/2017/03/Bottom-Ads-bloodstock-150px-X-100px.jpg", true);
-//            itemslist.add(item);
-//            itemslist.add(link);
-            FileHelper.writeDataSP(itemlist, sp);
+            itemlist.add(FileHelper.addItem(itemlist, itemName));
+            itemslistNotDeleted.add(FileHelper.addItem(itemslistNotDeleted, itemName));
+            FileHelper.writeDataJSON(itemlist, sp);
             binding.editText.setText("");
             rvAdapter.notifyDataSetChanged();
         });
 
-//        itemslist = FileHelper.addWebView(itemlist);
-
-        rvAdapter = new RecyclerViewAdapter(itemlist);
+        rvAdapter = new RecyclerViewAdapter(itemslistNotDeleted);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
         binding.recyclerView.setHasFixedSize(true);
         binding.recyclerView.setAdapter(rvAdapter);
@@ -57,19 +56,18 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
     }
 
     @Override
-    public void onItemClick(@NonNull String item, @NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onItemClick(@NonNull MyItem item, @NonNull RecyclerView.ViewHolder holder, int position) {
         Callback callback = () -> {
-//            itemslist.remove(position);
-//            itemslist.remove(position);
-            itemlist.remove(position);
+            itemlist = FileHelper.removeItem(itemlist, item);
+            itemslistNotDeleted.remove(position);
             rvAdapter.notifyDataSetChanged();
-//            FileHelper.writeData(itemlist, getApplicationContext());
-
-            Intent serviceIntent = new Intent(this, MyService.class);
-            serviceIntent.putExtra("list_remove", itemlist);
-            startService(serviceIntent);
         };
         DialogFragment alert = new AlertDialogFragment(callback);
         alert.show(getSupportFragmentManager(), "dialog");
+    }
+
+    @Override
+    public void onButtonClick(@NonNull MyItem item, @NonNull RecyclerView.ViewHolder holder, int position) {
+        // idDeleted == true
     }
 }
