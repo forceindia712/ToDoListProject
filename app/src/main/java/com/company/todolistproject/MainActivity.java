@@ -7,6 +7,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
 import java.util.ArrayList;
@@ -42,18 +43,13 @@ public class MainActivity extends FragmentActivity {
         });
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
-            alert.setTitle("Delete");
-            alert.setMessage("Do you want to delete this item from list?");
-            alert.setCancelable(false);
-            alert.setNegativeButton("No", (dialog, which) -> dialog.cancel());
-            alert.setPositiveButton("Yes", (dialog, which) -> {
+            Callback callback = () -> {
                 itemlist.remove(position);
                 arrayAdapter.notifyDataSetChanged();
                 FileHelper.writeData(itemlist, getApplicationContext());
-            });
-            AlertDialog alertDialog = alert.create();
-            alertDialog.show();
+            };
+            DialogFragment alert = new AlertDialogFragment(callback);
+            alert.show(getSupportFragmentManager(), "dialog");
         });
     }
 }
