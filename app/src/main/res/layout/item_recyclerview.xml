@@ -37,6 +37,19 @@
                 app:layout_constraintTop_toBottomOf="@id/view1"
                 tools:ignore="MissingConstraints" />
 
+            <TextView
+                android:id="@+id/data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="3dp"
+                android:text="data"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/button2"
+                app:layout_constraintHorizontal_bias="0.9"
+                app:layout_constraintStart_toEndOf="@+id/item"
+                app:layout_constraintTop_toTopOf="@+id/view1"
+                tools:ignore="MissingConstraints" />
+
             <View
                 android:id="@+id/view2"
                 android:layout_width="match_parent"
@@ -56,9 +69,18 @@
                 app:layout_constraintTop_toBottomOf="@+id/view1"
                 app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="68dp"
+                android:layout_height="27dp"
+                app:layout_constraintEnd_toStartOf="@+id/BOTTOM_END"
+                app:layout_constraintTop_toBottomOf="@+id/view1" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
