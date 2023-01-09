@@ -1,5 +1,6 @@
 package com.company.todolistproject;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.todolistproject.databinding.ActivityMainBinding;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity implements RecyclerViewAdapter.ClickListener {
@@ -32,18 +32,21 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
         binding.button.setOnClickListener(v -> {
             String itemName = binding.editText.getText().toString();
             itemlist.add(itemName);
-            FileHelper.writeData(itemlist, getApplicationContext());
-            MyItem item = new MyItem(itemName, false);
-            MyItem link = FileHelper.addURL();
-            itemslist.add(item);
-            itemslist.add(link);
+
+            Intent serviceIntent = new Intent(this, MyService.class);
+            serviceIntent.putExtra("list", itemlist);
+            startService(serviceIntent);
+//            MyItem item = new MyItem(itemName, false);
+//            MyItem link = new MyItem("https://www.overdrive.ie/wp-content/uploads/2017/03/Bottom-Ads-bloodstock-150px-X-100px.jpg", true);
+//            itemslist.add(item);
+//            itemslist.add(link);
             binding.editText.setText("");
             rvAdapter.notifyDataSetChanged();
         });
 
-        itemslist = FileHelper.WebView(itemlist);
+//        itemslist = FileHelper.addWebView(itemlist);
 
-        rvAdapter = new RecyclerViewAdapter(itemslist);
+        rvAdapter = new RecyclerViewAdapter(itemlist);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
         binding.recyclerView.setHasFixedSize(true);
         binding.recyclerView.setAdapter(rvAdapter);
@@ -51,13 +54,17 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
     }
 
     @Override
-    public void onItemClick(@NonNull MyItem item, @NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onItemClick(@NonNull String item, @NonNull RecyclerView.ViewHolder holder, int position) {
         Callback callback = () -> {
-            itemslist.remove(position);
-            itemslist.remove(position);
-            itemlist.remove(position/2);
+//            itemslist.remove(position);
+//            itemslist.remove(position);
+            itemlist.remove(position);
             rvAdapter.notifyDataSetChanged();
-            FileHelper.writeData(itemlist, getApplicationContext());
+//            FileHelper.writeData(itemlist, getApplicationContext());
+
+            Intent serviceIntent = new Intent(this, MyService.class);
+            serviceIntent.putExtra("liste", itemlist);
+            startService(serviceIntent);
         };
         DialogFragment alert = new AlertDialogFragment(callback);
         alert.show(getSupportFragmentManager(), "dialog");
