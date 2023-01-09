@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.todolistproject.databinding.ActivityMainBinding;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity implements RecyclerViewAdapter.ClickListener {
@@ -17,6 +18,7 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
     ActivityMainBinding binding;
     RecyclerViewAdapter rvAdapter = null;
     ArrayList<String> itemlist = new ArrayList<>();
+    ArrayList<MyItem> itemslist = new ArrayList<>();
 
 
     @Override
@@ -30,12 +32,18 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
         binding.button.setOnClickListener(v -> {
             String itemName = binding.editText.getText().toString();
             itemlist.add(itemName);
-            binding.editText.setText("");
             FileHelper.writeData(itemlist, getApplicationContext());
+            MyItem item = new MyItem(itemName, false);
+            MyItem link = FileHelper.addURL();
+            itemslist.add(item);
+            itemslist.add(link);
+            binding.editText.setText("");
             rvAdapter.notifyDataSetChanged();
         });
 
-        rvAdapter = new RecyclerViewAdapter(itemlist);
+        itemslist = FileHelper.WebView(itemlist);
+
+        rvAdapter = new RecyclerViewAdapter(itemslist);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
         binding.recyclerView.setHasFixedSize(true);
         binding.recyclerView.setAdapter(rvAdapter);
@@ -43,9 +51,11 @@ public class MainActivity extends FragmentActivity implements RecyclerViewAdapte
     }
 
     @Override
-    public void onItemClick(@NonNull String item, @NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onItemClick(@NonNull MyItem item, @NonNull RecyclerView.ViewHolder holder, int position) {
         Callback callback = () -> {
-            itemlist.remove(position);
+            itemslist.remove(position);
+            itemslist.remove(position);
+            itemlist.remove(position/2);
             rvAdapter.notifyDataSetChanged();
             FileHelper.writeData(itemlist, getApplicationContext());
         };
