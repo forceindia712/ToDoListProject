@@ -17,6 +17,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 
@@ -122,22 +125,68 @@ public class FileHelper {
         return new MyItem(id, date, text, false);
     }
 
-    public static ArrayList<MyItem> removeItem(ArrayList<MyItem> itemlist, MyItem item) {
-        for (int i = 0; i < itemlist.size(); i++) {
-            if (itemlist.get(i).getId() == item.getId()) {
-                itemlist.get(i).setDeleted(true);
-            }
-        }
+    public static ArrayList<MyItem> removeItem(ArrayList<MyItem> itemlist, int position) {
+        itemlist.get(position).setDeleted(true);
         return itemlist;
     }
 
     public static String toDate(String date) {
-        if(date != null) {
+        if (date != null) {
             LocalDateTime dateTime = LocalDateTime.parse(date);
             DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
             String formattedDate = dateTime.format(myFormatObj);
             return formattedDate;
         }
         return null;
+    }
+
+    public static ArrayList<MyItem> sortingNumber(ArrayList<MyItem> itemlist) {
+
+        int tempTab[] = new int[itemlist.size()];
+        for (int i = 0; i < itemlist.size(); i++) {
+            tempTab[i] = itemlist.get(i).getText().length();
+        }
+
+        itemlist.sort(Comparator.comparing(MyItem::getText));
+
+        Arrays.sort(tempTab);
+        ArrayList<MyItem> tempArray = new ArrayList<>();
+        for (int i = 0; i < itemlist.size(); i++) {
+            for (int j = 0; j < itemlist.size(); j++) {
+                if (tempTab[i] == itemlist.get(j).getText().length()) {
+                    tempArray.add(itemlist.get(j));
+                    j = 9999;
+                }
+            }
+        }
+        return tempArray;
+    }
+
+    public static ArrayList<MyItem> sortingDate(ArrayList<MyItem> itemlist) {
+
+        ArrayList<String> tempArray = new ArrayList<>();
+        for (int i = 0; i < itemlist.size(); i++) {
+            tempArray.add(itemlist.get(i).getData());
+        }
+
+        Collections.sort(tempArray);
+
+        ArrayList<MyItem> tempArrayTwo = new ArrayList<>();
+        for (int i = 0; i < itemlist.size(); i++) {
+            for (int j = 0; j < itemlist.size(); j++)
+                if (tempArray.get(i).equals(itemlist.get(j).getData())) {
+                    tempArrayTwo.add(itemlist.get(j));
+                    j = 9999;
+                }
+        }
+        return tempArrayTwo;
+    }
+
+    public static ArrayList<MyItem> renewItem(ArrayList<MyItem> itemlist, int position) {
+        LocalDateTime data = LocalDateTime.now();
+        String date = data.toString();
+        itemlist.get(position).setDeleted(false);
+        itemlist.get(position).setData(date);
+        return itemlist;
     }
 }
