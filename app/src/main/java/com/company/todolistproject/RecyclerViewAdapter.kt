@@ -52,6 +52,7 @@ class RecyclerViewAdapter (private var list: ArrayList<MyItem>) : RecyclerView.A
         viewHolder.binding.data.text = FileHelper.toDate(item.data)
         viewHolder.binding.view1.setBackgroundColor(Color.RED)
         viewHolder.binding.view2.setBackgroundColor(Color.RED)
+        viewHolder.binding.BOTTOMEND.visibility = View.GONE
         viewHolder.binding.button2.visibility = View.VISIBLE
         viewHolder.binding.button2.setOnClickListener{
             clickListener?.onButtonClick(item, viewHolder, position)

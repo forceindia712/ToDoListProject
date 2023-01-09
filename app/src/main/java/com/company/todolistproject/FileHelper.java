@@ -25,6 +25,8 @@ import java.util.Locale;
 
 public class FileHelper {
 
+    public FileHelper() {
+    }
     public static final String FILENAME = "listinfoa.dat";
 
     public static void writeData(ArrayList<String> item, Context context) {
@@ -147,14 +149,15 @@ public class FileHelper {
             tempTab[i] = itemlist.get(i).getText().length();
         }
 
-        itemlist.sort(Comparator.comparing(MyItem::getText));
-
         Arrays.sort(tempTab);
+        ArrayList<Boolean> usage = new ArrayList<>(Arrays.asList(new Boolean[itemlist.size()]));
+        Collections.fill(usage, Boolean.TRUE);
         ArrayList<MyItem> tempArray = new ArrayList<>();
         for (int i = 0; i < itemlist.size(); i++) {
             for (int j = 0; j < itemlist.size(); j++) {
-                if (tempTab[i] == itemlist.get(j).getText().length()) {
+                if (tempTab[i] == itemlist.get(j).getText().length() && usage.get(j) == Boolean.TRUE) {
                     tempArray.add(itemlist.get(j));
+                    usage.set(j, false);
                     j = 9999;
                 }
             }
@@ -170,12 +173,14 @@ public class FileHelper {
         }
 
         Collections.sort(tempArray);
-
+        ArrayList<Boolean> usage = new ArrayList<>(Arrays.asList(new Boolean[itemlist.size()]));
+        Collections.fill(usage, Boolean.TRUE);
         ArrayList<MyItem> tempArrayTwo = new ArrayList<>();
         for (int i = 0; i < itemlist.size(); i++) {
             for (int j = 0; j < itemlist.size(); j++)
-                if (tempArray.get(i).equals(itemlist.get(j).getData())) {
+                if (tempArray.get(i).equals(itemlist.get(j).getData()) && usage.get(j) == Boolean.TRUE) {
                     tempArrayTwo.add(itemlist.get(j));
+                    usage.set(j, false);
                     j = 9999;
                 }
         }
