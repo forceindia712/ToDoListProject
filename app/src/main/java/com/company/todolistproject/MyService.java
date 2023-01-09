@@ -2,6 +2,7 @@ package com.company.todolistproject;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -16,8 +17,12 @@ public class MyService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("Service", "Service is running...");
 
-        ArrayList<String> listRemove = intent.getExtras().getStringArrayList("list");
-        FileHelper.writeData(listRemove, getApplicationContext());
+        SharedPreferences sp;
+
+        sp = getSharedPreferences("MyList", MODE_PRIVATE);;
+
+        ArrayList<String> list = intent.getExtras().getStringArrayList("list");
+        FileHelper.writeDataSP(list, sp);
 
         return super.onStartCommand(intent, flags, startId);
     }
